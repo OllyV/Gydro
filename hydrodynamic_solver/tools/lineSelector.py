@@ -12,7 +12,8 @@ from qgis.core import (
 from qgis.gui import QgsMapTool, QgsRubberBand
 
 
-class xsLineTool(QgsMapTool):
+class LineSelector(QgsMapTool):
+
     def __init__(self, canvas, on_finished, on_cancelled):
         super().__init__(canvas)
         self.canvas = canvas
@@ -55,9 +56,13 @@ class xsLineTool(QgsMapTool):
         if e.key() == Qt.Key_Escape:
             self._cancel()
             return
-        if e.key() in (Qt.Key_Return, Qt.Key_Enter):
+        if e.key() in (Qt.Key_Enter):
             self._finish()
             return
+        
+    def canvasDoubleClickEvent(self, e):
+        self._finish()
+        return
 
     def _cancel(self):
         self.points = []
