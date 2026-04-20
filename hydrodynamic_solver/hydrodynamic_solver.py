@@ -37,11 +37,12 @@ from PyQt5.QtWidgets import QAction
 from PyQt5.QtGui import QIcon
 
 from .solver_dialog import SolverDialog
+from .solverCore import SolverCore
 
 from qgis.core import QgsProcessingAlgorithm, QgsApplication
 from qgis.core import QgsRasterLayer, QgsProject, QgsCoordinateReferenceSystem
 
-from .hydrodynamic_solver_provider import HydrodynamicSolverProvider
+# from .hydrodynamic_solver_provider import HydrodynamicSolverProvider
 
 cmd_folder = os.path.split(inspect.getfile(inspect.currentframe()))[0]
 
@@ -55,11 +56,12 @@ class HydrodynamicSolverPlugin(object):
         self.provider = None
         self.iface = iface
         self.dlg = None
+        self.dockOpened = False 
 
-    def initProcessing(self):
-        """Init Processing provider for QGIS >= 3.8."""
-        self.provider = HydrodynamicSolverProvider()
-        QgsApplication.processingRegistry().addProvider(self.provider)
+    # def initProcessing(self):
+    #     """Init Processing provider for QGIS >= 3.8."""
+    #     self.provider = HydrodynamicSolverProvider()
+    #     QgsApplication.processingRegistry().addProvider(self.provider)
 
     def initGui(self):
         icon = os.path.join(os.path.join(cmd_folder, 'logo.png'))
@@ -70,11 +72,23 @@ class HydrodynamicSolverPlugin(object):
         #self.initProcessing()
 
     def run(self):
-        if self.dlg is None:
-            self.dlg = SolverDialog(self.iface, self.iface.mainWindow())
-        self.dlg.show()
-        self.dlg.raise_()
-        self.dlg.activateWindow()
+
+        if not self.dockOpened:
+            # if self.profiletool is None:
+            self.solver = SolverCore(self.iface, self)
+            self.iface.addDockWidget(
+                self.solver.dockwidget.location, self.solver.dockwidget
+            )
+            self.solver.dockwidget.closed.connect(self.cleaning)
+            self.dockOpened = True
+
+        
+
+        # if self.dlg is None:
+        #     self.dlg = SolverDialog(self.iface, self.iface.mainWindow())
+        # self.dlg.show()
+        # self.dlg.raise_()
+        # self.dlg.activateWindow()
 
         # basemap_url = 'https://tile.openstreetmap.org/{z}/{x}/{y}.png'
         # zmin = 0
@@ -93,8 +107,12 @@ class HydrodynamicSolverPlugin(object):
         # else:
         #     self.iface.messageBar().pushCritical('Error', 'Invalid Basemap Layer')
 
+    def cleaning(self):
+        return
+
+
     def unload(self):
-        QgsApplication.processingRegistry().removeProvider(self.provider)
+        # QgsApplication.processingRegistry().removeProvider(self.provider)
         self.iface.removeToolBarIcon(self.action)
         del self.action
 
