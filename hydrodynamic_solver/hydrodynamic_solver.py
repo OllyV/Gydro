@@ -33,10 +33,11 @@ __revision__ = '$Format:%H$'
 import os
 import sys
 import inspect
-from PyQt5.QtWidgets import QAction
-from PyQt5.QtGui import QIcon
+from qgis.PyQt.QtWidgets import QAction
+from qgis.PyQt.QtGui import QIcon
+from .ui.solverDockWidget import SolverDockWidget
 
-from .solver_dialog import SolverDialog
+# from .solver_dialog import SolverDialog
 from .solverCore import SolverCore
 
 from qgis.core import QgsProcessingAlgorithm, QgsApplication
@@ -75,11 +76,13 @@ class HydrodynamicSolverPlugin(object):
 
         if not self.dockOpened:
             # if self.profiletool is None:
-            self.solver = SolverCore(self.iface, self)
+            #self.solver = SolverCore(self.iface, self)
+            self.dockwidget = SolverDockWidget(self.iface, self)
+            
             self.iface.addDockWidget(
-                self.solver.dockwidget.location, self.solver.dockwidget
+                self.dockwidget.location, self.dockwidget
             )
-            self.solver.dockwidget.closed.connect(self.cleaning)
+            self.dockwidget.closed.connect(self.cleaning)
             self.dockOpened = True
 
         
@@ -108,6 +111,8 @@ class HydrodynamicSolverPlugin(object):
         #     self.iface.messageBar().pushCritical('Error', 'Invalid Basemap Layer')
 
     def cleaning(self):
+        self.dockOpened = False
+        self.dockwidget = None
         return
 
 
