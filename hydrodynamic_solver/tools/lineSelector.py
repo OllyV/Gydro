@@ -14,19 +14,19 @@ from qgis.gui import QgsMapTool, QgsRubberBand
 
 class LineSelector(QgsMapTool):
 
-    def __init__(self, canvas, on_finished, on_cancelled):
+    def __init__(self, canvas, on_finished, on_cancelled, color):
         super().__init__(canvas)
         self.canvas = canvas
         self.on_finished = on_finished
         self.on_cancelled = on_cancelled
         self.points = []
         self.rb = QgsRubberBand(canvas, QgsWkbTypes.LineGeometry)
-        self.rb.setColor(QColor(200, 0, 0, 255))  # red
+        self.rb.setColor(color)
         self.rb.setWidth(1)
 
     def activate(self):
         super().activate()
-        self.canvas.setCursor(QCursor(Qt.CrossCursor))
+        self.canvas.setCursor(QCursor(Qt.CursorShape.CrossCursor))
 
     def deactivate(self):
         try:
@@ -36,7 +36,7 @@ class LineSelector(QgsMapTool):
         super().deactivate()
 
     def canvasPressEvent(self, e):
-        if e.button() == Qt.RightButton:
+        if (e.button() == Qt.MouseButton.RightButton):
             self._finish()
             return
         p = self.toMapCoordinates(e.pos())
@@ -56,13 +56,14 @@ class LineSelector(QgsMapTool):
         if e.key() == Qt.Key_Escape:
             self._cancel()
             return
-        if e.key() in (Qt.Key_Enter):
+        if e.key() == Qt.Key_Enter:
             self._finish()
             return
         
     def canvasDoubleClickEvent(self, e):
-        self._finish()
-        return
+        if (e.button() == Qt.MouseButton.LeftButton):
+            self._finish()
+            return
 
     def _cancel(self):
         self.points = []
@@ -78,5 +79,6 @@ class LineSelector(QgsMapTool):
             self._cancel()
             return
         geom = QgsGeometry.fromPolylineXY(self.points)
+        self.points = []
         if self.on_finished:
             self.on_finished(geom)

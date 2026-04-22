@@ -12,7 +12,7 @@
             "pathMappings": [
                 {
                     "localRoot": "${workspaceFolder}",
-                    "remoteRoot": "C:/Users/voa77/AppData/Roaming/QGIS/QGIS3/profiles/default/python/plugins/hydrodynamic_solver"
+                    "remoteRoot": "C:/Users/voa77/AppData/Roaming/QGIS/QGIS4/profiles/default/python/plugins/hydrodynamic_solver"
                 }
             ],
             "justMyCode": true
