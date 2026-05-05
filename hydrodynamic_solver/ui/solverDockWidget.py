@@ -1,6 +1,6 @@
 
-import os
-import re
+
+from math import dist
 
 from qgis.core import (
     QgsWkbTypes,
@@ -34,20 +34,28 @@ from qgis.PyQt.QtWidgets import (
 
 # plugin import
 from ..tools.lineSelector import LineSelector
-from ..models.flowModel import FlowModel, ProfileModel
+
+from ..models.ProfileModel import ProfileModel
 
 try:
-    import matplotlib  # noqa:F401
-    from matplotlib import *  # noqa:F403,F401
-
+    import matplotlib.pyplot as plt
     matplotlib_loaded = True
 except ImportError:
     matplotlib_loaded = False
 
 from pathlib import Path
 
+from matplotlib.backends.backend_qtagg import FigureCanvas, FigureCanvasQTAgg
+from matplotlib.backends.backend_qtagg import \
+    NavigationToolbar2QT as NavigationToolbar
+from matplotlib.backends.qt_compat import QtWidgets
+from matplotlib.figure import Figure
+
+import numpy as np
+
 # uiFilePath = os.path.abspath(os.path.join(os.path.dirname(__file__), "solverdockwidget.ui"))
 # FormClass = uic.loadUiType(uiFilePath)[0]
+
 
 
 class SolverDockWidget(QDockWidget):
@@ -66,11 +74,11 @@ class SolverDockWidget(QDockWidget):
 
         self.iface = iface1
         self.canvas = self.iface.mapCanvas()
-        self._set_up_profileSelector()
-        self._set_up_flowSelector()
+        self._set_up_CSectionSelector()
+        self._set_up_ProfileSelector()
 
-        self.profilesCount=1
-        self.model = FlowModel()
+        self.CSectionsCount=1
+        self.model = ProfileModel()
 
         self.location = Qt.DockWidgetArea.BottomDockWidgetArea
         minsize = self.minimumSize()
@@ -78,64 +86,81 @@ class SolverDockWidget(QDockWidget):
         self.setMinimumSize(minsize)
         self.setMaximumSize(maxsize)
         self.setAttribute(Qt.WidgetAttribute.WA_DeleteOnClose)
-        self.label_helper.setText("Start by selecting profiles." )
+        self.label_helper.setText("Start by selecting cross sections." )
         self.showRubberBands = {}
 
         # Signals
-        self.button_profiles_select.clicked.connect(self.selectProfile)
-        self.button_flow_select.clicked.connect(self.selectFlow)
+        self.button_CSections_select.clicked.connect(self.selectCSection)
+        self.button_Profile_select.clicked.connect(self.selectProfile)
         
-        self.button_profiles_clear.clicked.connect(self.clearProfiles)
-        self.button_flow_clear.clicked.connect(self.clearFlows)
-        self.spin_profiles_count.valueChanged.connect(self.updateProfilesCount)
+        self.button_CSections_clear.clicked.connect(self.clearCSections)
+        self.button_Profile_clear.clicked.connect(self.clearProfiles)
+        self.spin_CSections_count.valueChanged.connect(self.updateCSectionsCount)
+        self.comboBox_CSections_show.activated.connect(self.show_CSection_index)
 
+        layout = self.verticalLayout_CSections
+        
+        self._CSectionPlot = FigureCanvas(Figure(figsize=(5, 3)))
+        layout.addWidget(self._CSectionPlot)
+        layout.addWidget(NavigationToolbar(self._CSectionPlot, self))
+
+        #self._CSectionPlot = self.plot_canvas
+        #self._CSectionPlot = self._CSectionPlot.figure.subplots()
+
+        # t = np.linspace(0, 10, 501)
+        # self._static_ax.plot(t, np.tan(t), ".")
+
+    
+    def selectCSection(self):
+        self.label_helper.setText("Select cross section and double click to end. \nCurrent cross section count " 
+                                  + str(len(self.model.CSections)) 
+                                  + "\nExpecting to add cross sections: " + str(self.CSectionsCount-len(self.model.CSections)))
+        self.canvas.setMapTool(self.CSectionSelector)
     
     def selectProfile(self):
-        self.label_helper.setText("Select profile and double click to end. \nCurrent profile count " 
-                                  + str(len(self.model.profiles)) 
-                                  + "\nExpecting to add profiles: " + str(self.profilesCount-len(self.model.profiles)))
-        self.canvas.setMapTool(self.profileSelector)
-    
-    def selectFlow(self):
-        self.label_helper.setText("Select flow and double click to end.")
-        self.canvas.setMapTool(self.flowSelector)
+        self.label_helper.setText("Select Profile and double click to end.")
+        self.canvas.setMapTool(self.ProfileSelector)
 
-    def storeProfile(self, geom):
-        self.addRubberBand(geom, 'profile' + str(len(self.model.profiles)), QColor(0, 200, 0, 255))
-        self.model.profiles.append(geom)
+    def storeCSection(self, geom):
+        num = len(self.model.CSections)
+        self.addRubberBand(geom, 'CSection' + str(num), QColor(0, 200, 0, 255))
+        self.comboBox_CSections_show.addItem("Cross section " + str(num))
+
+        self.model.CSections.append(geom)
         
-        if(len(self.model.profiles) < self.profilesCount):
-            self.selectProfile()
+        if(len(self.model.CSections) < self.CSectionsCount):
+            self.selectCSection()
         else:
-            self.profilesCount=len(self.model.profiles)
-            self.spin_profiles_count.setValue(self.profilesCount)
+            self.CSectionsCount=len(self.model.CSections)
+            self.spin_CSections_count.setValue(self.CSectionsCount)
             
-        self.label_helper.setText("Profile added." + "\nCurrent profile count " + str(len(self.model.profiles)))
+        self.label_helper.setText("Cross section added." + "\nCurrent cross section count " + str(len(self.model.CSections)))
         return
     
-    def storeFlow(self, geom):
-        self.addRubberBand(geom, 'flow' + str(len(self.model.mainFlowLines)), QColor(0, 0, 250, 255))
-        self.model.mainFlowLines.append(geom)
-        self.label_helper.setText("Flow added." + "\nCurrent flow count " + str(len(self.model.mainFlowLines)))
+    def storeProfile(self, geom):
+        self.addRubberBand(geom, 'Profile' + str(len(self.model.mainProfileLines)), QColor(0, 0, 250, 255))
+        self.model.mainProfileLines.append(geom)
+        self.label_helper.setText("Profile added." + "\nCurrent Profile count " + str(len(self.model.mainProfileLines)))
         return
     
+    def clearCSections(self):
+        self.model.CSections.clear()
+        self.CSectionsCount = 0
+        self.clearRubberBands('CSection')
+        self.label_helper.setText("Cross section cleared.")
+        self.spin_CSections_count.setValue(0)
+        self.comboBox_CSections_show.clear()
+
     def clearProfiles(self):
-        self.model.profiles.clear()
-        self.profilesCount = 0
-        self.clearRubberBands('profile')
+        self.model.mainProfileLines.clear()
+        self.clearRubberBands('Profile')
         self.label_helper.setText("Profiles cleared.")
-        self.spin_profiles_count.setValue(0)
 
-    def clearFlows(self):
-        self.model.mainFlowLines.clear()
-        self.clearRubberBands('flow')
-        self.label_helper.setText("Flows cleared.")
-
-    def updateProfilesCount(self, value):
-        if value > len(self.model.profiles):
-            self.profilesCount=value
-            self.label_helper.setText("Current profile count " + str(len(self.model.profiles)) 
-                                  + "\nExpecting to add profiles: " + str(self.profilesCount - len(self.model.profiles)))
+    def updateCSectionsCount(self, value):
+        if value > len(self.model.CSections):
+            self.CSectionsCount=value
+            self.label_helper.setText("Current cross section count " + str(len(self.model.CSections)) 
+                                  + "\nExpecting to add cross sections: " + str(self.CSectionsCount - len(self.model.CSections)))
             return
         
         
@@ -151,7 +176,6 @@ class SolverDockWidget(QDockWidget):
         r.setToGeometry(geom, None)
         self.showRubberBands[name] = r
 
-
     def clearRubberBands(self, pattern):
         for key in list(self.showRubberBands.keys()):
             if pattern in key:
@@ -161,32 +185,84 @@ class SolverDockWidget(QDockWidget):
 
     #Set up settings
 
-    def _set_up_profileSelector(self):
+    def _set_up_CSectionSelector(self):
         def finished(geom):
             self.iface.mapCanvas().unsetMapTool(tool)
-            self.storeProfile(geom)
+            self.storeCSection(geom)
         
         def cancelled():
             self.iface.mapCanvas().unsetMapTool(tool)
         red = QColor(200, 0, 0, 255)  # red
         
         tool = LineSelector(self.canvas, finished, cancelled, red)
-        self.profileSelector = tool
+        self.CSectionSelector = tool
 
-    def _set_up_flowSelector(self):
+    def _set_up_ProfileSelector(self):
         def finished(geom):
             self.iface.mapCanvas().unsetMapTool(tool)
-            self.storeFlow(geom)
+            self.storeProfile(geom)
         
         def cancelled():
             self.iface.mapCanvas().unsetMapTool(tool)
         blue = QColor(0, 0, 250, 255)  # blue
         
         tool = LineSelector(self.canvas, finished, cancelled, blue)
-        self.flowSelector = tool
+        self.ProfileSelector = tool
 
     def closeEvent(self, event):
-        self.clearRubberBands('flow')
-        self.clearRubberBands('profile')
+        self.clearRubberBands('Profile')
+        self.clearRubberBands('CSection')
         self.plugincore.dockOpened = False
+
+
+    def show_CSection_index(self, index):
+        print("Index selected", index)
+        self.showCSections(index)
+
+
+    def showCSections(self, number):
+
+        if number > len(self.model.CSections):
+            self.label_helper.setText("Invalid cross section number.")
+            return
+        
+        geom = self.model.CSections[number]
+        self.clearRubberBands('CSection_tmp')
+        self.addRubberBand(geom, 'CSection_tmp', QColor(250, 0, 0, 255))
+        pts = self.geometryToPoints(geom)
+
+        provider = self.iface.activeLayer().dataProvider()
+        depth = np.array([provider.sample(p, 1)[0] for p in pts])
+        dz = np.arange(0, len(depth))
+
+        x = [p.x() for p in pts]
+        y = [p.y() for p in pts]
+
+        pt = self._CSectionPlot.figure.subplots()
+        #pt.plot(x, y, color='blue')
+        pt.plot(dz, depth, color='red')
+        self._CSectionPlot.draw_idle()
+
+
+
+    def geometryToPoints(self, geom):
+        dx = self.iface.mapCanvas().layers()[0].rasterUnitsPerPixelX()
+        dist = np.arange(0, geom.length(), dx)
+        pts = [geom.interpolate(d).asPoint() for d in dist]
+        return pts
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 

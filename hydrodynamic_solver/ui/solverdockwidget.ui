@@ -24,7 +24,7 @@
     <item>
      <widget class="QTabWidget" name="tabWidget">
       <property name="currentIndex">
-       <number>0</number>
+       <number>1</number>
       </property>
       <widget class="QWidget" name="tab_main">
        <attribute name="title">
@@ -39,13 +39,13 @@
          </widget>
         </item>
         <item row="1" column="1">
-         <widget class="QGroupBox" name="groupBox_flow_settings">
+         <widget class="QGroupBox" name="groupBox_Profile_settings">
           <property name="title">
-           <string>Flow select</string>
+           <string>Profile select</string>
           </property>
           <layout class="QVBoxLayout" name="verticalLayout_2">
            <item>
-            <widget class="QLabel" name="label_mainflow">
+            <widget class="QLabel" name="label_mainProfile">
              <property name="sizePolicy">
               <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
                <horstretch>0</horstretch>
@@ -56,26 +56,26 @@
               <bool>false</bool>
              </property>
              <property name="text">
-              <string>Select main flow line</string>
+              <string>Select main Profile line</string>
              </property>
             </widget>
            </item>
            <item>
-            <widget class="QComboBox" name="comboBox_flow_select">
+            <widget class="QComboBox" name="comboBox_Profile_select">
              <property name="maxVisibleItems">
               <number>10</number>
              </property>
             </widget>
            </item>
            <item>
-            <widget class="QPushButton" name="button_flow_select">
+            <widget class="QPushButton" name="button_Profile_select">
              <property name="text">
               <string>Create new</string>
              </property>
             </widget>
            </item>
            <item>
-            <widget class="QPushButton" name="button_flow_clear">
+            <widget class="QPushButton" name="button_Profile_clear">
              <property name="text">
               <string>Clear</string>
              </property>
@@ -85,16 +85,16 @@
          </widget>
         </item>
         <item row="1" column="0">
-         <widget class="QGroupBox" name="groupBox_proflies_settings">
+         <widget class="QGroupBox" name="groupBox_CSection_settings">
           <property name="title">
-           <string>Profiles select</string>
+           <string>Cross-sections select</string>
           </property>
           <property name="checkable">
            <bool>false</bool>
           </property>
           <layout class="QVBoxLayout" name="verticalLayout_3">
            <item>
-            <widget class="QLabel" name="label_profiles_count">
+            <widget class="QLabel" name="label_CSections_count">
              <property name="sizePolicy">
               <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
                <horstretch>0</horstretch>
@@ -102,12 +102,12 @@
               </sizepolicy>
              </property>
              <property name="text">
-              <string>Count of profiles</string>
+              <string>Count of cross-sections</string>
              </property>
             </widget>
            </item>
            <item>
-            <widget class="QSpinBox" name="spin_profiles_count">
+            <widget class="QSpinBox" name="spin_CSections_count">
              <property name="sizePolicy">
               <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
                <horstretch>0</horstretch>
@@ -123,14 +123,14 @@
             </widget>
            </item>
            <item>
-            <widget class="QPushButton" name="button_profiles_select">
+            <widget class="QPushButton" name="button_CSections_select">
              <property name="text">
               <string>Select</string>
              </property>
             </widget>
            </item>
            <item>
-            <widget class="QPushButton" name="button_profiles_clear">
+            <widget class="QPushButton" name="button_CSections_clear">
              <property name="text">
               <string>Clear</string>
              </property>
@@ -141,26 +141,26 @@
         </item>
        </layout>
       </widget>
-      <widget class="QWidget" name="tab_profiles">
+      <widget class="QWidget" name="tab_CSections">
        <attribute name="title">
-        <string>Profiles</string>
+        <string>Cross Sections</string>
        </attribute>
-       <layout class="QVBoxLayout" name="verticalLayout_4">
+       <layout class="QVBoxLayout" name="verticalLayout_CSections">
         <item>
-         <widget class="QComboBox" name="comboBox_profiles_show"/>
+         <widget class="QComboBox" name="comboBox_CSections_show"/>
         </item>
         <item>
-         <widget class="QFrame" name="frame_profiles"/>
+         <widget class="QFrame" name="frame_CSections"/>
         </item>
        </layout>
       </widget>
-      <widget class="QWidget" name="tab_flowmodel">
+      <widget class="QWidget" name="tab_Profilemodel">
        <attribute name="title">
-        <string>Flow model</string>
+        <string>Profile model</string>
        </attribute>
-       <layout class="QVBoxLayout" name="verticalLayout_4">
+       <layout class="QVBoxLayout" name="verticalLayout_Profilemodel">
         <item>
-         <widget class="QFrame" name="frame_flowmodel"/>
+         <widget class="QFrame" name="frame_Profilemodel"/>
         </item>
        </layout>
       </widget>

@@ -85,6 +85,8 @@ class HydrodynamicSolverPlugin(object):
             self.dockwidget.closed.connect(self.cleaning)
             self.dockOpened = True
 
+
+
         
 
         # if self.dlg is None:
@@ -114,7 +116,6 @@ class HydrodynamicSolverPlugin(object):
         self.dockOpened = False
         self.dockwidget = None
         return
-
 
     def unload(self):
         # QgsApplication.processingRegistry().removeProvider(self.provider)
