@@ -32,9 +32,8 @@ from qgis.PyQt.QtWidgets import (
     QVBoxLayout,
 )
 
-# plugin import
+from ..tools.GeometryCalculationHelper import GeometryCalculationHelper
 from ..tools.lineSelector import LineSelector
-
 from ..models.ProfileModel import ProfileModel
 
 try:
@@ -97,6 +96,9 @@ class SolverDockWidget(QDockWidget):
         self.button_Profile_clear.clicked.connect(self.clearProfiles)
         self.spin_CSections_count.valueChanged.connect(self.updateCSectionsCount)
         self.comboBox_CSections_show.activated.connect(self.show_CSection_index)
+        self.comboBox_Profile_select.activated.connect(self.show_Profile_index)
+
+        self.button_Profile_calculate_by_deepest_points.clicked.connect(self.calculateProfileByDeepestPoints)
 
         layout = self.verticalLayout_CSections
         
@@ -104,12 +106,20 @@ class SolverDockWidget(QDockWidget):
         layout.addWidget(self._CSectionPlot)
         layout.addWidget(NavigationToolbar(self._CSectionPlot, self))
 
+        profileLayout = self.verticalLayout_Profile
+
+        self._ProfilePlot = FigureCanvas(Figure(figsize=(5, 3)))
+        profileLayout.addWidget(self._ProfilePlot)
+        profileLayout.addWidget(NavigationToolbar(self._ProfilePlot, self))
+
         #self._CSectionPlot = self.plot_canvas
         #self._CSectionPlot = self._CSectionPlot.figure.subplots()
 
         # t = np.linspace(0, 10, 501)
         # self._static_ax.plot(t, np.tan(t), ".")
 
+
+    # Cross section and profile selections
     
     def selectCSection(self):
         self.label_helper.setText("Select cross section and double click to end. \nCurrent cross section count " 
@@ -138,11 +148,16 @@ class SolverDockWidget(QDockWidget):
         return
     
     def storeProfile(self, geom):
+        if geom is None:
+            self.label_helper.setText("Profile was not created.")
+            return
+
+        self.comboBox_Profile_select.addItem("Profile " + str(len(self.model.mainProfileLines)))
         self.addRubberBand(geom, 'Profile' + str(len(self.model.mainProfileLines)), QColor(0, 0, 250, 255))
         self.model.mainProfileLines.append(geom)
         self.label_helper.setText("Profile added." + "\nCurrent Profile count " + str(len(self.model.mainProfileLines)))
         return
-    
+
     def clearCSections(self):
         self.model.CSections.clear()
         self.CSectionsCount = 0
@@ -155,6 +170,7 @@ class SolverDockWidget(QDockWidget):
         self.model.mainProfileLines.clear()
         self.clearRubberBands('Profile')
         self.label_helper.setText("Profiles cleared.")
+        self.comboBox_Profile_select.clear()
 
     def updateCSectionsCount(self, value):
         if value > len(self.model.CSections):
@@ -163,8 +179,20 @@ class SolverDockWidget(QDockWidget):
                                   + "\nExpecting to add cross sections: " + str(self.CSectionsCount - len(self.model.CSections)))
             return
         
+    def calculateProfileByDeepestPoints(self):
+        if len(self.model.CSections) < 2:
+            self.label_helper.setText("Not enough cross sections to calculate profile. Please add more cross sections first.")
+            return
+        
+        profilePoints = []
+        for csection in self.model.CSections:
+            deepestPoint = GeometryCalculationHelper.deepestPointOfGeometry(self.iface, csection)
+            profilePoints.append(deepestPoint)
+
+        self.storeProfile(QgsGeometry.fromPolylineXY(profilePoints))
         
 
+    
 
 
     #RubberBand management
@@ -215,13 +243,17 @@ class SolverDockWidget(QDockWidget):
         self.plugincore.dockOpened = False
 
 
+    # Graph showing
+
     def show_CSection_index(self, index):
         print("Index selected", index)
         self.showCSections(index)
 
+    def show_Profile_index(self, index):
+        print("Index selected", index)
+        self.showProfile(index)
 
     def showCSections(self, number):
-
         if number > len(self.model.CSections):
             self.label_helper.setText("Invalid cross section number.")
             return
@@ -229,30 +261,29 @@ class SolverDockWidget(QDockWidget):
         geom = self.model.CSections[number]
         self.clearRubberBands('CSection_tmp')
         self.addRubberBand(geom, 'CSection_tmp', QColor(250, 0, 0, 255))
-        pts = self.geometryToPoints(geom)
 
-        provider = self.iface.activeLayer().dataProvider()
-        depth = np.array([provider.sample(p, 1)[0] for p in pts])
+        depth = GeometryCalculationHelper.geometryToDepths(self.iface, geom)
         dz = np.arange(0, len(depth))
 
-        x = [p.x() for p in pts]
-        y = [p.y() for p in pts]
-
         pt = self._CSectionPlot.figure.subplots()
-        #pt.plot(x, y, color='blue')
         pt.plot(dz, depth, color='red')
         self._CSectionPlot.draw_idle()
 
+    def show_Profile_index(self, number):
+        if number > len(self.model.mainProfileLines):
+            self.label_helper.setText("Invalid profile number.")
+            return
+        
+        geom = self.model.mainProfileLines[number]
+        self.clearRubberBands('Profile_tmp')
+        self.addRubberBand(geom, 'Profile_tmp', QColor(0, 250, 255, 255))
 
+        depth = GeometryCalculationHelper.geometryToDepths(self.iface, geom)
+        dz = np.arange(0, len(depth))
 
-    def geometryToPoints(self, geom):
-        dx = self.iface.mapCanvas().layers()[0].rasterUnitsPerPixelX()
-        dist = np.arange(0, geom.length(), dx)
-        pts = [geom.interpolate(d).asPoint() for d in dist]
-        return pts
-
-
-
+        pt = self._ProfilePlot.figure.subplots()
+        pt.plot(dz, depth, color='blue')
+        self._ProfilePlot.draw_idle()
 
 
 
