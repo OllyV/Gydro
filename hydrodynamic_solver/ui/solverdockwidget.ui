@@ -1,174 +1,251 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>DockWidget</class>
- <widget class="QDockWidget" name="DockWidget">
-  <property name="geometry">
-   <rect>
-    <x>0</x>
-    <y>0</y>
-    <width>957</width>
-    <height>277</height>
-   </rect>
-  </property>
-  <property name="sizePolicy">
-   <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
-    <horstretch>0</horstretch>
-    <verstretch>0</verstretch>
-   </sizepolicy>
-  </property>
-  <property name="windowTitle">
-   <string>Solver</string>
-  </property>
-  <widget class="QWidget" name="dockWidgetContents">
-   <layout class="QVBoxLayout" name="verticalLayout">
-    <item>
-     <widget class="QTabWidget" name="tabWidget">
-      <property name="currentIndex">
-       <number>1</number>
-      </property>
-      <widget class="QWidget" name="tab_main">
-       <attribute name="title">
-        <string>Main</string>
-       </attribute>
-       <layout class="QGridLayout" name="gridLayout">
-        <item row="1" column="2">
-         <widget class="QLabel" name="label_helper">
-          <property name="text">
-           <string>TextLabel</string>
-          </property>
-         </widget>
-        </item>
-        <item row="1" column="1">
-         <widget class="QGroupBox" name="groupBox_Profile_settings">
-          <property name="title">
-           <string>Profile select</string>
-          </property>
-          <layout class="QVBoxLayout" name="verticalLayout_2">
-           <item>
-            <widget class="QLabel" name="label_mainProfile">
-             <property name="sizePolicy">
-              <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-               <horstretch>0</horstretch>
-               <verstretch>0</verstretch>
-              </sizepolicy>
-             </property>
-             <property name="mouseTracking">
-              <bool>false</bool>
-             </property>
-             <property name="text">
-              <string>Select main Profile line</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QComboBox" name="comboBox_Profile_select">
-             <property name="maxVisibleItems">
-              <number>10</number>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QPushButton" name="button_Profile_select">
-             <property name="text">
-              <string>Create new</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QPushButton" name="button_Profile_clear">
-             <property name="text">
-              <string>Clear</string>
-             </property>
-            </widget>
-           </item>
-          </layout>
-         </widget>
-        </item>
-        <item row="1" column="0">
-         <widget class="QGroupBox" name="groupBox_CSection_settings">
-          <property name="title">
-           <string>Cross-sections select</string>
-          </property>
-          <property name="checkable">
-           <bool>false</bool>
-          </property>
-          <layout class="QVBoxLayout" name="verticalLayout_3">
-           <item>
-            <widget class="QLabel" name="label_CSections_count">
-             <property name="sizePolicy">
-              <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-               <horstretch>0</horstretch>
-               <verstretch>0</verstretch>
-              </sizepolicy>
-             </property>
-             <property name="text">
-              <string>Count of cross-sections</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QSpinBox" name="spin_CSections_count">
-             <property name="sizePolicy">
-              <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
-               <horstretch>0</horstretch>
-               <verstretch>0</verstretch>
-              </sizepolicy>
-             </property>
-             <property name="minimum">
-              <number>0</number>
-             </property>
-             <property name="maximum">
-              <number>30</number>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QPushButton" name="button_CSections_select">
-             <property name="text">
-              <string>Select</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QPushButton" name="button_CSections_clear">
-             <property name="text">
-              <string>Clear</string>
-             </property>
-            </widget>
-           </item>
-          </layout>
-         </widget>
-        </item>
-       </layout>
-      </widget>
-      <widget class="QWidget" name="tab_CSections">
-       <attribute name="title">
-        <string>Cross Sections</string>
-       </attribute>
-       <layout class="QVBoxLayout" name="verticalLayout_CSections">
-        <item>
-         <widget class="QComboBox" name="comboBox_CSections_show"/>
-        </item>
-        <item>
-         <widget class="QFrame" name="frame_CSections"/>
-        </item>
-       </layout>
-      </widget>
-      <widget class="QWidget" name="tab_Profilemodel">
-       <attribute name="title">
-        <string>Profile model</string>
-       </attribute>
-       <layout class="QVBoxLayout" name="verticalLayout_Profilemodel">
-        <item>
-         <widget class="QFrame" name="frame_Profilemodel"/>
-        </item>
-       </layout>
-      </widget>
-     </widget>
-    </item>
-   </layout>
-  </widget>
- </widget>
- <resources/>
- <connections/>
+    <class>DockWidget</class>
+    <widget class="QDockWidget" name="DockWidget">
+        <property name="geometry">
+            <rect>
+                <x>0</x>
+                <y>0</y>
+                <width>957</width>
+                <height>307</height>
+            </rect>
+        </property>
+        <property name="sizePolicy">
+            <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+            </sizepolicy>
+        </property>
+        <widget class="QWidget" name="dockWidgetContents">
+            <layout class="QVBoxLayout" name="verticalLayout">
+                <item>
+                    <widget class="QLabel" name="label_helper">
+                        <property name="text">
+                            <string>TextLabel</string>
+                        </property>
+                    </widget>
+                </item>
+                <item>
+                    <widget class="QTabWidget" name="tabWidget">
+                        <property name="currentIndex">
+                            <number>4</number>
+                        </property>
+                        <widget class="QWidget" name="tab_main">
+                            <attribute name="title">
+                                <string>Main</string>
+                            </attribute>
+                            <layout class="QGridLayout" name="gridLayout">
+                                <item row="1" column="1">
+                                    <widget class="QGroupBox" name="groupBox_Profile_settings">
+                                        <property name="title">
+                                            <string>Profile select</string>
+                                        </property>
+                                        <layout class="QVBoxLayout" name="verticalLayout_2">
+                                            <item>
+                                                <widget class="QLabel" name="label_mainProfile">
+                                                    <property name="sizePolicy">
+                                                        <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+                                                            <horstretch>0</horstretch>
+                                                            <verstretch>0</verstretch>
+                                                        </sizepolicy>
+                                                    </property>
+                                                    <property name="mouseTracking">
+                                                        <bool>false</bool>
+                                                    </property>
+                                                    <property name="text">
+                                                        <string>Select main Profile line</string>
+                                                    </property>
+                                                </widget>
+                                            </item>
+                                            <item>
+                                                <widget class="QPushButton" name="button_Profile_select">
+                                                    <property name="text">
+                                                        <string>Create new</string>
+                                                    </property>
+                                                </widget>
+                                            </item>
+                                            <item>
+                                                <widget class="QPushButton" name="button_Profile_calculate_by_deepest_points">
+                                                    <property name="text">
+                                                        <string>Calculate by deepest points</string>
+                                                    </property>
+                                                </widget>
+                                            </item>
+                                            <item>
+                                                <widget class="QPushButton" name="button_Profile_clear">
+                                                    <property name="text">
+                                                        <string>Clear</string>
+                                                    </property>
+                                                </widget>
+                                            </item>
+                                        </layout>
+                                    </widget>
+                                </item>
+                                <item row="1" column="0">
+                                    <widget class="QGroupBox" name="groupBox_CSection_settings">
+                                        <property name="title">
+                                            <string>Cross-sections select</string>
+                                        </property>
+                                        <property name="checkable">
+                                            <bool>false</bool>
+                                        </property>
+                                        <layout class="QVBoxLayout" name="verticalLayout_3">
+                                            <item>
+                                                <widget class="QLabel" name="label_CSections_count">
+                                                    <property name="sizePolicy">
+                                                        <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+                                                            <horstretch>0</horstretch>
+                                                            <verstretch>0</verstretch>
+                                                        </sizepolicy>
+                                                    </property>
+                                                    <property name="text">
+                                                        <string>Count of cross-sections</string>
+                                                    </property>
+                                                </widget>
+                                            </item>
+                                            <item>
+                                                <widget class="QSpinBox" name="spin_CSections_count">
+                                                    <property name="sizePolicy">
+                                                        <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+                                                            <horstretch>0</horstretch>
+                                                            <verstretch>0</verstretch>
+                                                        </sizepolicy>
+                                                    </property>
+                                                    <property name="minimum">
+                                                        <number>0</number>
+                                                    </property>
+                                                    <property name="maximum">
+                                                        <number>30</number>
+                                                    </property>
+                                                </widget>
+                                            </item>
+                                            <item>
+                                                <widget class="QPushButton" name="button_CSections_select">
+                                                    <property name="text">
+                                                        <string>Select</string>
+                                                    </property>
+                                                </widget>
+                                            </item>
+                                            <item>
+                                                <widget class="QPushButton" name="button_CSections_clear">
+                                                    <property name="text">
+                                                        <string>Clear</string>
+                                                    </property>
+                                                </widget>
+                                            </item>
+                                        </layout>
+                                    </widget>
+                                </item>
+                            </layout>
+                        </widget>
+                        <widget class="QWidget" name="tab_CSections">
+                            <attribute name="title">
+                                <string>Cross Sections</string>
+                            </attribute>
+                            <layout class="QVBoxLayout" name="verticalLayout_CSections">
+                                <item>
+                                    <widget class="QComboBox" name="comboBox_CSections_show"/>
+                                </item>
+                                <item>
+                                    <widget class="QFrame" name="frame_CSections"/>
+                                </item>
+                            </layout>
+                        </widget>
+                        <widget class="QWidget" name="tab_Profile">
+                            <attribute name="title">
+                                <string>Profile</string>
+                            </attribute>
+                            <layout class="QVBoxLayout" name="verticalLayout_Profile">
+                                <item>
+                                    <widget class="QComboBox" name="comboBox_Profile_select">
+                                        <property name="maxVisibleItems">
+                                            <number>10</number>
+                                        </property>
+                                    </widget>
+                                </item>
+                                <item>
+                                    <widget class="QFrame" name="frame_Profile"/>
+                                </item>
+                            </layout>
+                        </widget>
+                        <widget class="QWidget" name="tab_Table">
+                            <attribute name="title">
+                                <string>Table CSections</string>
+                            </attribute>
+                            <layout class="QHBoxLayout" name="layout_Table">
+                                <item>
+                                    <widget class="QTableWidget" name="tableWidget_CSections"/>
+                                </item>
+                                <item>
+                                    <layout class="QVBoxLayout" name="button_Calculate_distances">
+                                        <item>
+                                            <widget class="QPushButton" name="pushButton">
+                                                <property name="text">
+                                                    <string>Calculate Distances</string>
+                                                </property>
+                                            </widget>
+                                        </item>
+                                    </layout>
+                                </item>
+                            </layout>
+                        </widget>
+                        <widget class="QWidget" name="tab_InputParameters">
+                            <attribute name="title">
+                                <string>Input parameters</string>
+                            </attribute>
+                            <layout class="QFormLayout" name="formLayout">
+
+                                <item row="0" column="0">
+                                    <widget class="QLabel" name="label_I">
+                                        <property name="text">
+                                            <string>I (degrees): </string>
+                                        </property>
+                                    </widget>
+                                </item>
+                                <item row="0" column="1">
+                                    <widget class="QLineEdit" name="lineEdit_I"/>
+                                </item>
+
+                                <item row="1" column="0">
+                                    <widget class="QLabel" name="label_Q">
+                                        <property name="text">
+                                            <string>Q (m³/s): </string>
+                                        </property>
+                                    </widget>
+                                </item>
+                                <item row="1" column="1">
+                                    <widget class="QLineEdit" name="lineEdit_Q"/>
+                                </item>
+
+                                <item row="2" column="0">
+                                    <widget class="QLabel" name="label_Manning">
+                                        <property name="text">
+                                            <string>Manning's n:</string>
+                                        </property>
+                                    </widget>
+                                </item>
+                                <item row="2" column="1">
+                                    <widget class="QLineEdit" name="lineEdit_Manning"/>
+                                </item>
+
+                                <item row="3" column="0">
+                                    <widget class="QLabel" name="label_L">
+                                        <property name="text">
+                                            <string>L error:</string>
+                                        </property>
+                                    </widget>
+                                </item>
+                                <item row="3" column="1">
+                                    <widget class="QLineEdit" name="lineEdit_L"/>
+                                </item>
+
+                        </layout>
+                    </widget>
+                </widget>
+            </item>
+        </layout>
+    </widget>
+</widget>
+<resources/>
+<connections/>
 </ui>
